@@ -3,14 +3,31 @@ package com.aep.s.aep6s.modelos;
 import java.util.Calendar;
 import java.util.List;
 
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+
+@Entity
 public class Horario {
 	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
 	private Calendar data;
 	
+	@Enumerated(EnumType.STRING)
 	private Turno turno;
 	
+	@ManyToOne
+	private Laboratorio laboratorio;
+	
+	@OneToMany
 	private List<Reserva> reservas;
 
 	@Override
@@ -61,7 +78,7 @@ public class Horario {
 	public void setTurno(Turno turno) {
 		this.turno = turno;
 	}
-
+	
 	public List<Reserva> getReservas() {
 		return reservas;
 	}
@@ -70,5 +87,12 @@ public class Horario {
 		this.reservas = reservas;
 	}
 	
+	public Laboratorio getLaboratorio() {
+		return laboratorio;
+	}
+	
+	public void setLaboratorio(Laboratorio laboratorio) {
+		this.laboratorio = laboratorio;
+	}
 	
 }

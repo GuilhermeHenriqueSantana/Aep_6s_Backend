@@ -2,12 +2,26 @@ package com.aep.s.aep6s.modelos;
 
 import java.util.List;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+
+@Entity
 public class Laboratorio {
-	
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
 	private String nome;
 	
+	@ManyToOne
+	private Bloco bloco;
+	
+	@OneToMany
 	private List<Horario> horarios;
 
 	@Override
@@ -59,5 +73,12 @@ public class Laboratorio {
 		this.horarios = horarios;
 	}
 	
+	public Bloco getBloco() {
+		return bloco;
+	}
+	
+	public void setBloco(Bloco bloco) {
+		this.bloco = bloco;
+	}	
 	
 }
