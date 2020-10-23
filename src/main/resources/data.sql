@@ -1,0 +1,1 @@
+INSERT INTO USUARIO(nome, user_name, senha, funcao) VALUES('administrador', 'admin', '$2a$10$mtd1IgW1yMJ1b0mpEaXEm.Sr0CAQAhzqoOnqTC9TEND/S2ZN7.M2y', 'ADMINISTRADOR');

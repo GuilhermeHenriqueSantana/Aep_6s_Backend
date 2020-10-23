@@ -24,7 +24,20 @@ public class Usuario {
 	
 	@Enumerated(EnumType.STRING)
 	private Funcao funcao;
+	
+	
 
+	public Usuario() {
+
+	}
+	
+	public Usuario(String userName, String senha, String nome, Funcao funcao) {
+		this.userName = userName;
+		this.senha = senha;
+		this.nome = nome;
+		this.funcao = funcao;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
