@@ -32,7 +32,7 @@ import com.aep.s.aep6s.repositorio.LaboratorioRepositorio;
 
 @RestController
 @RequestMapping("/blocos")
-public class BlocoControler {
+public class BlocoControle {
 	
 	@Autowired
 	BlocoRepositorio blocoRepositorio;

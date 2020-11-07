@@ -5,12 +5,13 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 import com.aep.s.aep6s.modelos.Bloco;
 import com.aep.s.aep6s.modelos.Laboratorio;
 import com.aep.s.aep6s.repositorio.BlocoRepositorio;
 import com.aep.s.aep6s.repositorio.LaboratorioRepositorio;
-import com.sun.istack.NotNull;
+
 
 public class AtualizacaoBlocoForm {
 	

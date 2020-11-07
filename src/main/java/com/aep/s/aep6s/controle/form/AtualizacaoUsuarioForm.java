@@ -1,12 +1,13 @@
 package com.aep.s.aep6s.controle.form;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 import com.aep.s.aep6s.modelos.Funcao;
 import com.aep.s.aep6s.modelos.Usuario;
 import com.aep.s.aep6s.repositorio.UsuarioRepositorio;
 import com.aep.s.aep6s.validacao.FuncaoValid;
-import com.sun.istack.NotNull;
+
 
 public class AtualizacaoUsuarioForm {
 		

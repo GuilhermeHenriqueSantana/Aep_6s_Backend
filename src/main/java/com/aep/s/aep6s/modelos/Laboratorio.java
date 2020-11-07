@@ -23,6 +23,16 @@ public class Laboratorio {
 	
 	@OneToMany
 	private List<Horario> horarios;
+	
+	public Laboratorio() {
+		
+	}
+
+	public Laboratorio(String nome, Bloco bloco, List<Horario> horarios) {
+		this.nome = nome;
+		this.bloco = bloco;
+		this.horarios = horarios;
+	}
 
 	@Override
 	public int hashCode() {
