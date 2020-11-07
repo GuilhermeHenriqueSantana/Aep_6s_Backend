@@ -19,6 +19,15 @@ public class Bloco {
 	
 	@OneToMany
 	private List<Laboratorio> laboratorios;
+	
+	public Bloco() {
+		
+	}
+
+	public Bloco(String nome, List<Laboratorio> laboratorios) {
+		this.nome = nome;
+		this.laboratorios = laboratorios;
+	}
 
 	@Override
 	public int hashCode() {

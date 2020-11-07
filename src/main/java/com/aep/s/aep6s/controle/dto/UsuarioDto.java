@@ -7,6 +7,8 @@ import com.aep.s.aep6s.modelos.Usuario;
 
 public class UsuarioDto {
 	
+	private Long id;
+	
 	private String userName;
 	
 	private String nome;
@@ -17,6 +19,7 @@ public class UsuarioDto {
 		this.userName = usuario.getUserName();
 		this.nome = usuario.getNome();
 		this.funcao = usuario.getFuncao().toString();
+		this.id = usuario.getId();
 	}
 
 	public String getUserName() {
@@ -29,6 +32,10 @@ public class UsuarioDto {
 
 	public String getFuncao() {
 		return funcao;
+	}
+	
+	public Long getId() {
+		return id;
 	}
 	
 	public static List<UsuarioDto> converter(List<Usuario> usuarios) {

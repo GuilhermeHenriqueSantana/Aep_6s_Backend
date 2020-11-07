@@ -2,42 +2,19 @@ package com.aep.s.aep6s.controle.form;
 
 import javax.validation.constraints.NotEmpty;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
 import com.aep.s.aep6s.modelos.Funcao;
 import com.aep.s.aep6s.modelos.Usuario;
+import com.aep.s.aep6s.repositorio.UsuarioRepositorio;
 import com.aep.s.aep6s.validacao.FuncaoValid;
 import com.sun.istack.NotNull;
 
-public class UsuarioForm {
-	
-	@NotNull @NotEmpty
-	private String userName;
-	
-	@NotNull @NotEmpty
-	private String senha;
-	
+public class AtualizacaoUsuarioForm {
+		
 	@NotNull @NotEmpty
 	private String nome;
 	
 	@NotNull @NotEmpty @FuncaoValid
 	private String funcao;
-
-	public String getUserName() {
-		return userName;
-	}
-
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
-
-	public String getSenha() {
-		return senha;
-	}
-
-	public void setSenha(String senha) {
-		this.senha = senha;
-	}
 
 	public String getNome() {
 		return nome;
@@ -55,9 +32,8 @@ public class UsuarioForm {
 		this.funcao = funcao;
 	}
 	
-	public Usuario converter() {
+	public Usuario atualiza(Long id, UsuarioRepositorio usuarioRepositorio) {
 		
-		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 		Funcao funcao;
 		
 		switch (this.funcao) {
@@ -72,7 +48,12 @@ public class UsuarioForm {
 			break;
 		}
 		
-		return new Usuario(userName, passwordEncoder.encode(senha), nome, funcao);
+		Usuario usuario = usuarioRepositorio.getOne(id);
+		
+		usuario.setFuncao(funcao);
+		usuario.setNome(nome);
+		
+		return usuario;
 	}
 	
 }
