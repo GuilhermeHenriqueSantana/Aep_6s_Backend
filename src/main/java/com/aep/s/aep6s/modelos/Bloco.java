@@ -1,5 +1,6 @@
 package com.aep.s.aep6s.modelos;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -18,15 +19,14 @@ public class Bloco {
 	private String nome;
 	
 	@OneToMany
-	private List<Laboratorio> laboratorios;
+	private List<Laboratorio> laboratorios = new ArrayList<Laboratorio>();
 	
 	public Bloco() {
 		
 	}
 
-	public Bloco(String nome, List<Laboratorio> laboratorios) {
+	public Bloco(String nome) {
 		this.nome = nome;
-		this.laboratorios = laboratorios;
 	}
 
 	@Override

@@ -64,7 +64,7 @@ public class BlocoControle {
 	@Transactional
 	@PreAuthorize("hasRole('ADMINISTRADOR')")
 	public ResponseEntity<BlocoDto> cadastrar(@RequestBody @Valid BlocoForm form, UriComponentsBuilder uriBuilder) {
-		Bloco bloco = form.converter(laboratorioRepositorio);
+		Bloco bloco = form.converter();
 		blocoRepositorio.save(bloco);
 		
 		URI uri = uriBuilder.path("/blocos/{id}").buildAndExpand(bloco.getId()).toUri();
@@ -89,7 +89,7 @@ public class BlocoControle {
 	public ResponseEntity<BlocoDto> atualizar(@PathVariable Long id, @RequestBody @Valid AtualizacaoBlocoForm form){
 		Optional<Bloco> opcional = blocoRepositorio.findById(id);
 		if(opcional.isPresent()) {
-			Bloco bloco = form.atualiza(id, blocoRepositorio, laboratorioRepositorio);
+			Bloco bloco = form.atualiza(id, blocoRepositorio);
 			return ResponseEntity.ok(new BlocoDto(bloco));
 		}
 		return ResponseEntity.notFound().build();

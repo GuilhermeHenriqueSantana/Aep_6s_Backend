@@ -24,17 +24,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.aep.s.aep6s.controle.dto.LaboratorioDto;
-import com.aep.s.aep6s.controle.dto.UsuarioDto;
-import com.aep.s.aep6s.controle.form.AtualizacaoUsuarioForm;
+import com.aep.s.aep6s.controle.form.AtualizacaoLaboratorioForm;
 import com.aep.s.aep6s.controle.form.LaboratorioForm;
-import com.aep.s.aep6s.controle.form.UsuarioForm;
 import com.aep.s.aep6s.modelos.Bloco;
 import com.aep.s.aep6s.modelos.Laboratorio;
-import com.aep.s.aep6s.modelos.Usuario;
 import com.aep.s.aep6s.repositorio.BlocoRepositorio;
 import com.aep.s.aep6s.repositorio.HorarioRepositorio;
 import com.aep.s.aep6s.repositorio.LaboratorioRepositorio;
-import com.aep.s.aep6s.repositorio.UsuarioRepositorio;
 
 @RestController
 @RequestMapping("/laboratorios")
@@ -91,20 +87,20 @@ public class LaboratorioControle {
 		return ResponseEntity.notFound().build();
 	}
 	
-	/*
+	
 	@CrossOrigin
 	@PutMapping("/{id}")
 	@Transactional
 	@PreAuthorize("hasRole('ADMINISTRADOR')")
-	public ResponseEntity<UsuarioDto> atualizar(@PathVariable Long id, @RequestBody @Valid AtualizacaoUsuarioForm form){
-		Optional<Usuario> opcional = laboratorioRepositorio.findById(id);
+	public ResponseEntity<LaboratorioDto> atualizar(@PathVariable Long id, @RequestBody @Valid AtualizacaoLaboratorioForm form) throws Exception{
+		Optional<Laboratorio> opcional = laboratorioRepositorio.findById(id);
 		if(opcional.isPresent()) {
-			Usuario usuario = form.atualiza(id, laboratorioRepositorio);
-			return ResponseEntity.ok(new UsuarioDto(usuario));
+			Laboratorio laboratorio = form.atualiza(id, blocoRepositorio, laboratorioRepositorio);
+			return ResponseEntity.ok(new LaboratorioDto(laboratorio));
 		}
 		return ResponseEntity.notFound().build();
 	}
-	*/
+	
 	
 	
 	@CrossOrigin
@@ -114,6 +110,8 @@ public class LaboratorioControle {
 	public ResponseEntity<?> remover(@PathVariable Long id){
 		Optional<Laboratorio> laboratorioOpt = laboratorioRepositorio.findById(id);
 		if(laboratorioOpt.isPresent()) {
+			Bloco bloco = blocoRepositorio.getOne(laboratorioOpt.get().getBloco().getId());
+			bloco.getLaboratorios().remove(laboratorioOpt.get());
 			laboratorioRepositorio.deleteById(id);	
 			return ResponseEntity.ok().build();
 		}
