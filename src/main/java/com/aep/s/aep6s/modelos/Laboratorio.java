@@ -1,5 +1,6 @@
 package com.aep.s.aep6s.modelos;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -22,7 +23,16 @@ public class Laboratorio {
 	private Bloco bloco;
 	
 	@OneToMany
-	private List<Horario> horarios;
+	private List<Horario> horarios = new ArrayList<Horario>();
+	
+	public Laboratorio() {
+		
+	}
+
+	public Laboratorio(String nome, Bloco bloco) {
+		this.nome = nome;
+		this.bloco = bloco;
+	}
 
 	@Override
 	public int hashCode() {

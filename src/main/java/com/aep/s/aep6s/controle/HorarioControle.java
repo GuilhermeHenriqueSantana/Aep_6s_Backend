@@ -23,19 +23,19 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.aep.s.aep6s.controle.dto.BlocoDto;
-import com.aep.s.aep6s.controle.form.AtualizacaoBlocoForm;
-import com.aep.s.aep6s.controle.form.BlocoForm;
-import com.aep.s.aep6s.modelos.Bloco;
-import com.aep.s.aep6s.repositorio.BlocoRepositorio;
+import com.aep.s.aep6s.controle.dto.HorarioDto;
+import com.aep.s.aep6s.controle.form.AtualizacaoHorarioForm;
+import com.aep.s.aep6s.controle.form.HorarioForm;
+import com.aep.s.aep6s.modelos.Horario;
+import com.aep.s.aep6s.modelos.Laboratorio;
+import com.aep.s.aep6s.repositorio.HorarioRepositorio;
 import com.aep.s.aep6s.repositorio.LaboratorioRepositorio;
 
 @RestController
-@RequestMapping("/blocos")
-public class BlocoControler {
-	
+@RequestMapping("/horarios")
+public class HorarioControle {
 	@Autowired
-	BlocoRepositorio blocoRepositorio;
+	HorarioRepositorio horarioRepositorio;
 	
 	@Autowired
 	LaboratorioRepositorio laboratorioRepositorio;
@@ -43,41 +43,34 @@ public class BlocoControler {
 	@CrossOrigin
 	@GetMapping
 	@PreAuthorize("hasRole('LIVRE') or hasRole('PROFESSOR') or hasRole('ADIMINISTRADOR')")
-	public List<BlocoDto> lista(@RequestParam(required = false) String nome) {
+	public List<HorarioDto> lista(@RequestParam(required = false) String nome) {
 		
-		List<Bloco> blocos = new ArrayList<>();
-		
-		if (nome == null) {
-			blocos = blocoRepositorio.findAll();
-		} else {
-			Optional<List<Bloco>> blocosOptional = blocoRepositorio.findByNome(nome);
-			if(blocosOptional.isPresent()) {
-				blocos = blocosOptional.get();
-			}
-		}
-		
-		return BlocoDto.converter(blocos);
+		List<Horario> horarios = new ArrayList<>();
+
+		horarios = horarioRepositorio.findAll();
+	
+		return HorarioDto.converter(horarios);
 	}
 	
 	@CrossOrigin
 	@PostMapping
 	@Transactional
 	@PreAuthorize("hasRole('ADMINISTRADOR')")
-	public ResponseEntity<BlocoDto> cadastrar(@RequestBody @Valid BlocoForm form, UriComponentsBuilder uriBuilder) {
-		Bloco bloco = form.converter(laboratorioRepositorio);
-		blocoRepositorio.save(bloco);
+	public ResponseEntity<HorarioDto> cadastrar(@RequestBody @Valid HorarioForm form, UriComponentsBuilder uriBuilder) throws Exception {
+		Horario horario = form.converter(laboratorioRepositorio);
+		horarioRepositorio.save(horario);
 		
-		URI uri = uriBuilder.path("/blocos/{id}").buildAndExpand(bloco.getId()).toUri();
-		return ResponseEntity.created(uri).body(new BlocoDto(bloco));
+		URI uri = uriBuilder.path("/blocos/{id}").buildAndExpand(horario.getId()).toUri();
+		return ResponseEntity.created(uri).body(new HorarioDto(horario));
 	}
 	
 	@CrossOrigin
 	@GetMapping("/{id}")
 	@PreAuthorize("hasRole('LIVRE') or hasRole('PROFESSOR') or hasRole('ADIMINISTRADOR')")
-	public ResponseEntity<BlocoDto> detalhar(@PathVariable Long id) {
-		Optional<Bloco> bloco = blocoRepositorio.findById(id);
-		if(bloco.isPresent()) {
-			return ResponseEntity.ok(new BlocoDto(bloco.get()));			
+	public ResponseEntity<HorarioDto> detalhar(@PathVariable Long id) {
+		Optional<Horario> horario = horarioRepositorio.findById(id);
+		if(horario.isPresent()) {
+			return ResponseEntity.ok(new HorarioDto(horario.get()));			
 		}
 		return ResponseEntity.notFound().build();
 	}
@@ -86,11 +79,11 @@ public class BlocoControler {
 	@PutMapping("/{id}")
 	@Transactional
 	@PreAuthorize("hasRole('ADMINISTRADOR')")
-	public ResponseEntity<BlocoDto> atualizar(@PathVariable Long id, @RequestBody @Valid AtualizacaoBlocoForm form){
-		Optional<Bloco> opcional = blocoRepositorio.findById(id);
+	public ResponseEntity<HorarioDto> atualizar(@PathVariable Long id, @RequestBody @Valid AtualizacaoHorarioForm form) throws Exception{
+		Optional<Horario> opcional = horarioRepositorio.findById(id);
 		if(opcional.isPresent()) {
-			Bloco bloco = form.atualiza(id, blocoRepositorio, laboratorioRepositorio);
-			return ResponseEntity.ok(new BlocoDto(bloco));
+			Horario horario = form.atualiza(id, horarioRepositorio, laboratorioRepositorio);
+			return ResponseEntity.ok(new HorarioDto(horario));
 		}
 		return ResponseEntity.notFound().build();
 	}
@@ -100,9 +93,11 @@ public class BlocoControler {
 	@Transactional
 	@PreAuthorize("hasRole('ADMINISTRADOR')")
 	public ResponseEntity<?> remover(@PathVariable Long id){
-		Optional<Bloco> bloco = blocoRepositorio.findById(id);
-		if(bloco.isPresent()) {
-			blocoRepositorio.deleteById(id);	
+		Optional<Horario> horario = horarioRepositorio.findById(id);
+		if(horario.isPresent()) {
+			Laboratorio laboratorio = laboratorioRepositorio.getOne(horario.get().getLaboratorio().getId());
+			laboratorio.getHorarios().remove(horario.get());
+			horarioRepositorio.deleteById(id);	
 			return ResponseEntity.ok().build();
 		}
 		return ResponseEntity.notFound().build();

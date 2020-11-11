@@ -1,5 +1,6 @@
 package com.aep.s.aep6s.modelos;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -12,6 +13,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 @Entity
 public class Horario {
 	
@@ -19,6 +22,7 @@ public class Horario {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
+	@DateTimeFormat(pattern = "dd/MM/yyyy")
 	private Calendar data;
 	
 	@Enumerated(EnumType.STRING)
@@ -28,7 +32,17 @@ public class Horario {
 	private Laboratorio laboratorio;
 	
 	@OneToMany
-	private List<Reserva> reservas;
+	private List<Reserva> reservas = new ArrayList<Reserva>();
+	
+	public Horario() {
+		
+	}
+	
+	public Horario(Calendar data, Turno turno, Laboratorio laboratorio) {
+		this.data = data;
+		this.turno = turno;
+		this.laboratorio = laboratorio;
+	}
 
 	@Override
 	public int hashCode() {
