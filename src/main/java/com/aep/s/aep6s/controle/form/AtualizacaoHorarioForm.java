@@ -12,13 +12,14 @@ import com.aep.s.aep6s.modelos.Laboratorio;
 import com.aep.s.aep6s.modelos.Turno;
 import com.aep.s.aep6s.repositorio.HorarioRepositorio;
 import com.aep.s.aep6s.repositorio.LaboratorioRepositorio;
+import com.aep.s.aep6s.validacao.TurnoValid;
 
 public class AtualizacaoHorarioForm {
 	
 	@NotNull 
 	private long data;
 	
-	@NotNull @NotEmpty
+	@NotNull @NotEmpty @TurnoValid
 	private String turno;
 	
 	@NotNull
