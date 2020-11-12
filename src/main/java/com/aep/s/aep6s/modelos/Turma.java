@@ -1,5 +1,6 @@
 package com.aep.s.aep6s.modelos;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -25,7 +26,7 @@ public class Turma {
 	private List<Reserva> reservas;
 	
 	@ManyToMany
-	private List<Professor> professores;
+	private List<Professor> professores = new ArrayList<Professor>();
 	
 	@ManyToOne
 	private Curso curso;

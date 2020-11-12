@@ -1,5 +1,6 @@
 package com.aep.s.aep6s.modelos;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -20,7 +21,7 @@ public class Professor {
 	private int ra;
 	
 	@ManyToMany
-	private List<Turma> turmas;
+	private List<Turma> turmas = new ArrayList<Turma>();
 
 	@Override
 	public int hashCode() {
