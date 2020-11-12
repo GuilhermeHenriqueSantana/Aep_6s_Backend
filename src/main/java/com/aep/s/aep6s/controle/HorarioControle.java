@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -43,7 +42,7 @@ public class HorarioControle {
 	@CrossOrigin
 	@GetMapping
 	@PreAuthorize("hasRole('LIVRE') or hasRole('PROFESSOR') or hasRole('ADIMINISTRADOR')")
-	public List<HorarioDto> lista(@RequestParam(required = false) String nome) {
+	public List<HorarioDto> lista() {
 		
 		List<Horario> horarios = new ArrayList<>();
 
@@ -60,7 +59,7 @@ public class HorarioControle {
 		Horario horario = form.converter(laboratorioRepositorio);
 		horarioRepositorio.save(horario);
 		
-		URI uri = uriBuilder.path("/blocos/{id}").buildAndExpand(horario.getId()).toUri();
+		URI uri = uriBuilder.path("/horarios/{id}").buildAndExpand(horario.getId()).toUri();
 		return ResponseEntity.created(uri).body(new HorarioDto(horario));
 	}
 	

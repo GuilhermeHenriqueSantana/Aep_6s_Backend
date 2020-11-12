@@ -24,23 +24,23 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.aep.s.aep6s.controle.dto.LaboratorioDto;
+import com.aep.s.aep6s.controle.dto.ReservaDto;
 import com.aep.s.aep6s.controle.form.AtualizacaoLaboratorioForm;
 import com.aep.s.aep6s.controle.form.LaboratorioForm;
 import com.aep.s.aep6s.modelos.Bloco;
 import com.aep.s.aep6s.modelos.Laboratorio;
+import com.aep.s.aep6s.modelos.Reserva;
 import com.aep.s.aep6s.repositorio.BlocoRepositorio;
 import com.aep.s.aep6s.repositorio.HorarioRepositorio;
 import com.aep.s.aep6s.repositorio.LaboratorioRepositorio;
+import com.aep.s.aep6s.repositorio.ReservaRepositorio;
 
 @RestController
-@RequestMapping("/laboratorios")
-public class LaboratorioControle {
+@RequestMapping("/reservas")
+public class ReservaControle {
 	
 	@Autowired
-	LaboratorioRepositorio laboratorioRepositorio;
-	
-	@Autowired
-	BlocoRepositorio blocoRepositorio;
+	ReservaRepositorio reservaRepositorio;
 	
 	@Autowired
 	HorarioRepositorio horarioRepositorio;
@@ -48,22 +48,15 @@ public class LaboratorioControle {
 	@CrossOrigin
 	@GetMapping
 	@PreAuthorize("hasRole('LIVRE') or hasRole('PROFESSOR') or hasRole('ADIMINISTRADOR')")
-	public List<LaboratorioDto> lista(@RequestParam(required = false) String nome) {
+	public List<ReservaDto> lista() {
 		
-		List<Laboratorio> laboratorios = new ArrayList<>();
+		List<Reserva> reservas = new ArrayList<>();
 		
-		if (nome == null) {
-			laboratorios = laboratorioRepositorio.findAll();
-		} else {
-			Optional<List<Laboratorio>> laboratoriosOpt = laboratorioRepositorio.findByNome(nome);
-			if(laboratoriosOpt.isPresent()) {
-				laboratorios = laboratoriosOpt.get();
-			}
-		}
+		reservas = reservaRepositorio.findAll();
 		
-		return LaboratorioDto.converter(laboratorios);
+		return ReservaDto.converter(reservas);
 	}
-	
+	/*
 	@CrossOrigin
 	@PostMapping
 	@Transactional
@@ -72,7 +65,7 @@ public class LaboratorioControle {
 		Laboratorio laboratorio = form.converter(blocoRepositorio, horarioRepositorio);
 		laboratorioRepositorio.save(laboratorio);
 		
-		URI uri = uriBuilder.path("/laboratorios/{id}").buildAndExpand(laboratorio.getId()).toUri();
+		URI uri = uriBuilder.path("/usuarios/{id}").buildAndExpand(laboratorio.getId()).toUri();
 		return ResponseEntity.created(uri).body(new LaboratorioDto(laboratorio));
 	}
 	
@@ -117,4 +110,5 @@ public class LaboratorioControle {
 		}
 		return ResponseEntity.notFound().build();
 	}
+	*/
 }

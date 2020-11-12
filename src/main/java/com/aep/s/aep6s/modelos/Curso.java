@@ -1,5 +1,6 @@
 package com.aep.s.aep6s.modelos;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -18,7 +19,16 @@ public class Curso {
 	private String nome;
 	
 	@OneToMany
-	List<Turma> turmas;
+	List<Turma> turmas = new ArrayList<Turma>();
+	
+	public Curso() {
+
+	}
+
+
+	public Curso(String nome) {
+		this.nome = nome;
+	}
 
 	@Override
 	public int hashCode() {
