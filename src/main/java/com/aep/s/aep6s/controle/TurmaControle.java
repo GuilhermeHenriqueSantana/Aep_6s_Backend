@@ -1,7 +1,6 @@
 package com.aep.s.aep6s.controle;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,61 +18,57 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.aep.s.aep6s.controle.dto.BlocoDto;
-import com.aep.s.aep6s.controle.form.AtualizacaoBlocoForm;
-import com.aep.s.aep6s.controle.form.BlocoForm;
-import com.aep.s.aep6s.modelos.Bloco;
-import com.aep.s.aep6s.repositorio.BlocoRepositorio;
+
+import com.aep.s.aep6s.controle.dto.TurmaDto;
+import com.aep.s.aep6s.controle.form.AtualizacaoTurmaForm;
+import com.aep.s.aep6s.controle.form.TurmaForm;
+import com.aep.s.aep6s.modelos.Curso;
+import com.aep.s.aep6s.modelos.Turma;
+import com.aep.s.aep6s.repositorio.CursoRepositorio;
+import com.aep.s.aep6s.repositorio.TurmaRepositorio;
 
 @RestController
-@RequestMapping("/blocos")
-public class BlocoControle {
+@RequestMapping("/turmas")
+public class TurmaControle {
 	
 	@Autowired
-	BlocoRepositorio blocoRepositorio;
+	TurmaRepositorio turmaRepositorio;
+	
+	@Autowired
+	CursoRepositorio cursoRepositorio;
 
 	@CrossOrigin
 	@GetMapping
 	@PreAuthorize("hasRole('LIVRE') or hasRole('PROFESSOR') or hasRole('ADIMINISTRADOR')")
-	public List<BlocoDto> lista(@RequestParam(required = false) String nome) {
+	public List<TurmaDto> lista() {
 		
-		List<Bloco> blocos = new ArrayList<>();
+		List<Turma> turmas = turmaRepositorio.findAll();
 		
-		if (nome == null) {
-			blocos = blocoRepositorio.findAll();
-		} else {
-			Optional<List<Bloco>> blocosOptional = blocoRepositorio.findByNome(nome);
-			if(blocosOptional.isPresent()) {
-				blocos = blocosOptional.get();
-			}
-		}
-		
-		return BlocoDto.converter(blocos);
+		return TurmaDto.converter(turmas);
 	}
 	
 	@CrossOrigin
 	@PostMapping
 	@Transactional
 	@PreAuthorize("hasRole('ADMINISTRADOR')")
-	public ResponseEntity<BlocoDto> cadastrar(@RequestBody @Valid BlocoForm form, UriComponentsBuilder uriBuilder) {
-		Bloco bloco = form.converter();
-		blocoRepositorio.save(bloco);
+	public ResponseEntity<TurmaDto> cadastrar(@RequestBody @Valid TurmaForm form, UriComponentsBuilder uriBuilder) throws Exception {
+		Turma turma = form.converter(cursoRepositorio);
+		turmaRepositorio.save(turma);
 		
-		URI uri = uriBuilder.path("/blocos/{id}").buildAndExpand(bloco.getId()).toUri();
-		return ResponseEntity.created(uri).body(new BlocoDto(bloco));
+		URI uri = uriBuilder.path("/turmas/{id}").buildAndExpand(turma.getId()).toUri();
+		return ResponseEntity.created(uri).body(new TurmaDto(turma));
 	}
 	
 	@CrossOrigin
 	@GetMapping("/{id}")
 	@PreAuthorize("hasRole('LIVRE') or hasRole('PROFESSOR') or hasRole('ADIMINISTRADOR')")
-	public ResponseEntity<BlocoDto> detalhar(@PathVariable Long id) {
-		Optional<Bloco> bloco = blocoRepositorio.findById(id);
-		if(bloco.isPresent()) {
-			return ResponseEntity.ok(new BlocoDto(bloco.get()));			
+	public ResponseEntity<TurmaDto> detalhar(@PathVariable Long id) {
+		Optional<Turma> turma = turmaRepositorio.findById(id);
+		if(turma.isPresent()) {
+			return ResponseEntity.ok(new TurmaDto(turma.get()));			
 		}
 		return ResponseEntity.notFound().build();
 	}
@@ -82,11 +77,11 @@ public class BlocoControle {
 	@PutMapping("/{id}")
 	@Transactional
 	@PreAuthorize("hasRole('ADMINISTRADOR')")
-	public ResponseEntity<BlocoDto> atualizar(@PathVariable Long id, @RequestBody @Valid AtualizacaoBlocoForm form){
-		Optional<Bloco> opcional = blocoRepositorio.findById(id);
+	public ResponseEntity<TurmaDto> atualizar(@PathVariable Long id, @RequestBody @Valid AtualizacaoTurmaForm form) throws Exception{
+		Optional<Turma> opcional = turmaRepositorio.findById(id);
 		if(opcional.isPresent()) {
-			Bloco bloco = form.atualiza(id, blocoRepositorio);
-			return ResponseEntity.ok(new BlocoDto(bloco));
+			Turma turma = form.atualiza(id, turmaRepositorio,cursoRepositorio);
+			return ResponseEntity.ok(new TurmaDto(turma));
 		}
 		return ResponseEntity.notFound().build();
 	}
@@ -96,9 +91,11 @@ public class BlocoControle {
 	@Transactional
 	@PreAuthorize("hasRole('ADMINISTRADOR')")
 	public ResponseEntity<?> remover(@PathVariable Long id){
-		Optional<Bloco> bloco = blocoRepositorio.findById(id);
-		if(bloco.isPresent()) {
-			blocoRepositorio.deleteById(id);	
+		Optional<Turma> turma = turmaRepositorio.findById(id);
+		if(turma.isPresent()) {
+			Curso curso = cursoRepositorio.getOne(turma.get().getCurso().getId());
+			curso.getTurmas().remove(turma.get());
+			turmaRepositorio.deleteById(id);	
 			return ResponseEntity.ok().build();
 		}
 		return ResponseEntity.notFound().build();

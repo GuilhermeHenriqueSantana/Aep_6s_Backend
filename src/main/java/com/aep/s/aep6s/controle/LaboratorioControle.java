@@ -29,7 +29,6 @@ import com.aep.s.aep6s.controle.form.LaboratorioForm;
 import com.aep.s.aep6s.modelos.Bloco;
 import com.aep.s.aep6s.modelos.Laboratorio;
 import com.aep.s.aep6s.repositorio.BlocoRepositorio;
-import com.aep.s.aep6s.repositorio.HorarioRepositorio;
 import com.aep.s.aep6s.repositorio.LaboratorioRepositorio;
 
 @RestController
@@ -41,9 +40,6 @@ public class LaboratorioControle {
 	
 	@Autowired
 	BlocoRepositorio blocoRepositorio;
-	
-	@Autowired
-	HorarioRepositorio horarioRepositorio;
 
 	@CrossOrigin
 	@GetMapping
@@ -69,7 +65,7 @@ public class LaboratorioControle {
 	@Transactional
 	@PreAuthorize("hasRole('ADMINISTRADOR')")
 	public ResponseEntity<LaboratorioDto> cadastrar(@RequestBody @Valid LaboratorioForm form, UriComponentsBuilder uriBuilder) throws Exception {
-		Laboratorio laboratorio = form.converter(blocoRepositorio, horarioRepositorio);
+		Laboratorio laboratorio = form.converter(blocoRepositorio);
 		laboratorioRepositorio.save(laboratorio);
 		
 		URI uri = uriBuilder.path("/laboratorios/{id}").buildAndExpand(laboratorio.getId()).toUri();
