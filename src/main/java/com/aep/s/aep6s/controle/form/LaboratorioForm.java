@@ -8,7 +8,6 @@ import javax.validation.constraints.NotNull;
 import com.aep.s.aep6s.modelos.Bloco;
 import com.aep.s.aep6s.modelos.Laboratorio;
 import com.aep.s.aep6s.repositorio.BlocoRepositorio;
-import com.aep.s.aep6s.repositorio.HorarioRepositorio;
 
 
 public class LaboratorioForm {
@@ -35,7 +34,7 @@ public class LaboratorioForm {
 		this.blocoId = blocoId;
 	}
 	
-	public Laboratorio converter(BlocoRepositorio blocoRepositorio, HorarioRepositorio horarioRepositorio) throws Exception {
+	public Laboratorio converter(BlocoRepositorio blocoRepositorio) throws Exception {
 		
 		Optional<Bloco> blocoOpt = blocoRepositorio.findById(blocoId);
 		

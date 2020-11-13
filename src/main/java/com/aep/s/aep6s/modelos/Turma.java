@@ -23,13 +23,23 @@ public class Turma {
 	private int quantidadeAlunos;
 	
 	@OneToMany
-	private List<Reserva> reservas;
+	private List<Reserva> reservas = new ArrayList<Reserva>();
 	
 	@ManyToMany
 	private List<Professor> professores = new ArrayList<Professor>();
 	
 	@ManyToOne
 	private Curso curso;
+	
+	public Turma() {
+		
+	}
+	
+	public Turma(String nome, int quantidadeAlunos, Curso curso) {
+		this.nome = nome;
+		this.quantidadeAlunos = quantidadeAlunos;
+		this.curso = curso;
+	}
 
 	@Override
 	public int hashCode() {
