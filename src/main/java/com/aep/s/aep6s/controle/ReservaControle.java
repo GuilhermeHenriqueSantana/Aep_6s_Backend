@@ -50,9 +50,7 @@ public class ReservaControle {
 	@PreAuthorize("hasRole('LIVRE') or hasRole('PROFESSOR') or hasRole('ADIMINISTRADOR')")
 	public List<ReservaDto> lista() {
 		
-		List<Reserva> reservas = new ArrayList<>();
-		
-		reservas = reservaRepositorio.findAll();
+		List<Reserva> reservas = reservaRepositorio.findAll();
 		
 		return ReservaDto.converter(reservas);
 	}
