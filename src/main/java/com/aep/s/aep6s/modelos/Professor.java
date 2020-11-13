@@ -3,6 +3,7 @@ package com.aep.s.aep6s.modelos;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,10 +19,20 @@ public class Professor {
 	
 	private String nome;
 	
+	@Column(unique = true)
 	private int ra;
 	
 	@ManyToMany
 	private List<Turma> turmas = new ArrayList<Turma>();
+	
+	public Professor() {
+
+	}
+
+	public Professor(String nome, int ra) {
+		this.nome = nome;
+		this.ra = ra;
+	}
 
 	@Override
 	public int hashCode() {
