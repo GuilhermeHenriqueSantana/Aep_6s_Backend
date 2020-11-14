@@ -1,7 +1,6 @@
 package com.aep.s.aep6s.controle;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,21 +18,18 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.aep.s.aep6s.controle.dto.LaboratorioDto;
 import com.aep.s.aep6s.controle.dto.ReservaDto;
-import com.aep.s.aep6s.controle.form.AtualizacaoLaboratorioForm;
-import com.aep.s.aep6s.controle.form.LaboratorioForm;
-import com.aep.s.aep6s.modelos.Bloco;
-import com.aep.s.aep6s.modelos.Laboratorio;
+import com.aep.s.aep6s.controle.form.AtualizacaoReservaForm;
+import com.aep.s.aep6s.controle.form.ReservaForm;
+import com.aep.s.aep6s.modelos.Horario;
 import com.aep.s.aep6s.modelos.Reserva;
-import com.aep.s.aep6s.repositorio.BlocoRepositorio;
+import com.aep.s.aep6s.modelos.Turma;
 import com.aep.s.aep6s.repositorio.HorarioRepositorio;
-import com.aep.s.aep6s.repositorio.LaboratorioRepositorio;
 import com.aep.s.aep6s.repositorio.ReservaRepositorio;
+import com.aep.s.aep6s.repositorio.TurmaRepositorio;
 
 @RestController
 @RequestMapping("/reservas")
@@ -44,6 +40,9 @@ public class ReservaControle {
 	
 	@Autowired
 	HorarioRepositorio horarioRepositorio;
+	
+	@Autowired
+	TurmaRepositorio turmaRepositorio;
 
 	@CrossOrigin
 	@GetMapping
@@ -54,26 +53,26 @@ public class ReservaControle {
 		
 		return ReservaDto.converter(reservas);
 	}
-	/*
+	
 	@CrossOrigin
 	@PostMapping
 	@Transactional
 	@PreAuthorize("hasRole('ADMINISTRADOR')")
-	public ResponseEntity<LaboratorioDto> cadastrar(@RequestBody @Valid LaboratorioForm form, UriComponentsBuilder uriBuilder) throws Exception {
-		Laboratorio laboratorio = form.converter(blocoRepositorio, horarioRepositorio);
-		laboratorioRepositorio.save(laboratorio);
+	public ResponseEntity<ReservaDto> cadastrar(@RequestBody @Valid ReservaForm form, UriComponentsBuilder uriBuilder) throws Exception {
+		Reserva reserva = form.converter(horarioRepositorio, turmaRepositorio);
+		reservaRepositorio.save(reserva);
 		
-		URI uri = uriBuilder.path("/usuarios/{id}").buildAndExpand(laboratorio.getId()).toUri();
-		return ResponseEntity.created(uri).body(new LaboratorioDto(laboratorio));
+		URI uri = uriBuilder.path("/usuarios/{id}").buildAndExpand(reserva.getId()).toUri();
+		return ResponseEntity.created(uri).body(new ReservaDto(reserva));
 	}
 	
 	@CrossOrigin
 	@GetMapping("/{id}")
 	@PreAuthorize("hasRole('LIVRE') or hasRole('PROFESSOR') or hasRole('ADIMINISTRADOR')")
-	public ResponseEntity<LaboratorioDto> detalhar(@PathVariable Long id) {
-		Optional<Laboratorio> laboratorioOpt = laboratorioRepositorio.findById(id);
-		if(laboratorioOpt.isPresent()) {
-			return ResponseEntity.ok(new LaboratorioDto(laboratorioOpt.get()));			
+	public ResponseEntity<ReservaDto> detalhar(@PathVariable Long id) {
+		Optional<Reserva> reservaOpt = reservaRepositorio.findById(id);
+		if(reservaOpt.isPresent()) {
+			return ResponseEntity.ok(new ReservaDto(reservaOpt.get()));			
 		}
 		return ResponseEntity.notFound().build();
 	}
@@ -83,11 +82,11 @@ public class ReservaControle {
 	@PutMapping("/{id}")
 	@Transactional
 	@PreAuthorize("hasRole('ADMINISTRADOR')")
-	public ResponseEntity<LaboratorioDto> atualizar(@PathVariable Long id, @RequestBody @Valid AtualizacaoLaboratorioForm form) throws Exception{
-		Optional<Laboratorio> opcional = laboratorioRepositorio.findById(id);
+	public ResponseEntity<ReservaDto> atualizar(@PathVariable Long id, @RequestBody @Valid AtualizacaoReservaForm form) throws Exception{
+		Optional<Reserva> opcional = reservaRepositorio.findById(id);
 		if(opcional.isPresent()) {
-			Laboratorio laboratorio = form.atualiza(id, blocoRepositorio, laboratorioRepositorio);
-			return ResponseEntity.ok(new LaboratorioDto(laboratorio));
+			Reserva reserva = form.atualiza(id, horarioRepositorio, turmaRepositorio, reservaRepositorio);
+			return ResponseEntity.ok(new ReservaDto(reserva));
 		}
 		return ResponseEntity.notFound().build();
 	}
@@ -99,14 +98,17 @@ public class ReservaControle {
 	@Transactional
 	@PreAuthorize("hasRole('ADMINISTRADOR')")
 	public ResponseEntity<?> remover(@PathVariable Long id){
-		Optional<Laboratorio> laboratorioOpt = laboratorioRepositorio.findById(id);
-		if(laboratorioOpt.isPresent()) {
-			Bloco bloco = blocoRepositorio.getOne(laboratorioOpt.get().getBloco().getId());
-			bloco.getLaboratorios().remove(laboratorioOpt.get());
-			laboratorioRepositorio.deleteById(id);	
+		Optional<Reserva> reservaOpt = reservaRepositorio.findById(id);
+		if(reservaOpt.isPresent()) {
+			Reserva reserva = reservaOpt.get();
+			Horario horario = horarioRepositorio.findById(reserva.getHorario().getId()).get();
+			Turma turma = turmaRepositorio.findById(reserva.getHorario().getId()).get();
+			horario.getReservas().remove(reserva);
+			turma.getReservas().remove(reserva);
+			reservaRepositorio.deleteById(id);	
 			return ResponseEntity.ok().build();
 		}
 		return ResponseEntity.notFound().build();
 	}
-	*/
+	
 }
