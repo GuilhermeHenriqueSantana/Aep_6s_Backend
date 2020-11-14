@@ -26,6 +26,17 @@ public class Reserva {
 	
 	@ManyToOne
 	private Turma turma;
+	
+	public Reserva() {
+
+	}
+
+	public Reserva(HorarioReserva horarioReserva, TipoReserva tipoReserva, Horario horario, Turma turma) {
+		this.horarioReserva = horarioReserva;
+		this.tipoReserva = tipoReserva;
+		this.horario = horario;
+		this.turma = turma;
+	}
 
 	@Override
 	public int hashCode() {

@@ -23,11 +23,14 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 
 import com.aep.s.aep6s.controle.dto.TurmaDto;
+import com.aep.s.aep6s.controle.form.AtualizaProfessorDaTurmaForm;
 import com.aep.s.aep6s.controle.form.AtualizacaoTurmaForm;
 import com.aep.s.aep6s.controle.form.TurmaForm;
 import com.aep.s.aep6s.modelos.Curso;
+import com.aep.s.aep6s.modelos.Professor;
 import com.aep.s.aep6s.modelos.Turma;
 import com.aep.s.aep6s.repositorio.CursoRepositorio;
+import com.aep.s.aep6s.repositorio.ProfessorRepositorio;
 import com.aep.s.aep6s.repositorio.TurmaRepositorio;
 
 @RestController
@@ -39,6 +42,9 @@ public class TurmaControle {
 	
 	@Autowired
 	CursoRepositorio cursoRepositorio;
+	
+	@Autowired
+	ProfessorRepositorio professorRepositorio;
 
 	@CrossOrigin
 	@GetMapping
@@ -97,6 +103,44 @@ public class TurmaControle {
 			curso.getTurmas().remove(turma.get());
 			turmaRepositorio.deleteById(id);	
 			return ResponseEntity.ok().build();
+		}
+		return ResponseEntity.notFound().build();
+	}
+	
+	@CrossOrigin
+	@PutMapping("/{id}/professor")
+	@Transactional
+	@PreAuthorize("hasRole('ADMINISTRADOR')")
+	public ResponseEntity<TurmaDto> atualizarProfessor(@PathVariable Long id, @RequestBody @Valid AtualizaProfessorDaTurmaForm form) throws Exception{
+		Optional<Turma> opcional = turmaRepositorio.findById(id);
+		if(opcional.isPresent()) {
+			Turma turma = form.atualiza(id, turmaRepositorio, professorRepositorio);
+			return ResponseEntity.ok(new TurmaDto(turma));
+		}
+		return ResponseEntity.notFound().build();
+	}
+	
+	@CrossOrigin
+	@DeleteMapping("/{id}/professor/{professorId}")
+	@Transactional
+	@PreAuthorize("hasRole('ADMINISTRADOR')")
+	public ResponseEntity<TurmaDto> removeProfessor(@PathVariable Long id, @PathVariable Long professorId) throws Exception{
+		Optional<Turma> opcional = turmaRepositorio.findById(id);
+		if(opcional.isPresent()) {
+			Turma turma = opcional.get();
+			
+			Optional<Professor> professorOpcional = professorRepositorio.findById(professorId);
+			
+			if (!professorOpcional.isPresent()) {
+				throw new Exception("Professor com id:" + professorId + " não encontrado");
+			}
+			
+			Professor professor = professorOpcional.get();
+			
+			turma.getProfessores().remove(professor);
+			professor.getTurmas().remove(turma);
+			
+			return ResponseEntity.ok(new TurmaDto(turma));
 		}
 		return ResponseEntity.notFound().build();
 	}
