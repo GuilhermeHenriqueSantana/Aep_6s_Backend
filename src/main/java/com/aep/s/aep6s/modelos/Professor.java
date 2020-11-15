@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToOne;
 
 @Entity
 public class Professor {
@@ -25,13 +26,17 @@ public class Professor {
 	@ManyToMany
 	private List<Turma> turmas = new ArrayList<Turma>();
 	
+	@OneToOne
+	private Usuario usuario;
+	
 	public Professor() {
 
 	}
 
-	public Professor(String nome, int ra) {
+	public Professor(String nome, int ra, Usuario usuario) {
 		this.nome = nome;
 		this.ra = ra;
+		this.usuario = usuario;
 	}
 
 	@Override
@@ -91,5 +96,11 @@ public class Professor {
 		this.turmas = turmas;
 	}
 	
+	public Usuario getUsuario() {
+		return usuario;
+	}
 	
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
+	}
 }

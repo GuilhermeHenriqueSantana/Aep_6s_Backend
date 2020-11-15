@@ -7,6 +7,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 
 @Entity
 public class Usuario {
@@ -25,7 +26,8 @@ public class Usuario {
 	@Enumerated(EnumType.STRING)
 	private Funcao funcao;
 	
-	
+	@OneToOne(mappedBy = "usuario")
+	private Professor professor;
 
 	public Usuario() {
 
@@ -101,6 +103,14 @@ public class Usuario {
 
 	public void setFuncao(Funcao funcao) {
 		this.funcao = funcao;
+	}
+	
+	public Professor getProfessor() {
+		return professor;
+	}
+	
+	public void setProfessor(Professor professor) {
+		this.professor = professor;
 	}
 	
 	

@@ -47,6 +47,6 @@ public class ServicoPersonalizadoDetalhesUsuario implements UserDetailsService{
 			authoritiesAtual = authoritiesUser;
 			break;
 		}
-		return new User(user.getNome(), user.getSenha(), authoritiesAtual);
+		return new User(user.getUserName(), user.getSenha(), authoritiesAtual);
 	}
 }

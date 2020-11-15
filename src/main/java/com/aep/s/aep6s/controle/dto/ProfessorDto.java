@@ -13,12 +13,15 @@ public class ProfessorDto {
 	
 	private int ra;
 	
+	private Long usuarioId;
+	
 	private List<Long> turmasId = new ArrayList<Long>();
 
 	public ProfessorDto(Professor professor) {
 		this.id = professor.getId();
 		this.nome = professor.getNome();
 		this.ra = professor.getRa();
+		this.usuarioId = professor.getUsuario().getId();
 		
 		professor.getTurmas().forEach((turma)->{
 			turmasId.add(turma.getId());
@@ -35,6 +38,10 @@ public class ProfessorDto {
 
 	public int getRa() {
 		return ra;
+	}
+	
+	public Long getUsuarioId() {
+		return usuarioId;
 	}
 
 	public List<Long> getTurmasId() {

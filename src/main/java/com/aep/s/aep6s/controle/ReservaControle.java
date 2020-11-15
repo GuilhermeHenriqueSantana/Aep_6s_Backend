@@ -10,6 +10,9 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,9 +28,11 @@ import com.aep.s.aep6s.controle.dto.ReservaDto;
 import com.aep.s.aep6s.controle.form.AtualizacaoReservaForm;
 import com.aep.s.aep6s.controle.form.ReservaForm;
 import com.aep.s.aep6s.modelos.Horario;
+import com.aep.s.aep6s.modelos.Professor;
 import com.aep.s.aep6s.modelos.Reserva;
 import com.aep.s.aep6s.modelos.Turma;
 import com.aep.s.aep6s.repositorio.HorarioRepositorio;
+import com.aep.s.aep6s.repositorio.ProfessorRepositorio;
 import com.aep.s.aep6s.repositorio.ReservaRepositorio;
 import com.aep.s.aep6s.repositorio.TurmaRepositorio;
 
@@ -43,6 +48,9 @@ public class ReservaControle {
 	
 	@Autowired
 	TurmaRepositorio turmaRepositorio;
+	
+	@Autowired
+	ProfessorRepositorio professorRepositorio;
 
 	@CrossOrigin
 	@GetMapping
@@ -57,13 +65,37 @@ public class ReservaControle {
 	@CrossOrigin
 	@PostMapping
 	@Transactional
-	@PreAuthorize("hasRole('ADMINISTRADOR')")
-	public ResponseEntity<ReservaDto> cadastrar(@RequestBody @Valid ReservaForm form, UriComponentsBuilder uriBuilder) throws Exception {
+	@PreAuthorize("hasRole('ADMINISTRADOR') or hasRole('PROFESSOR')")
+	public ResponseEntity<ReservaDto> cadastrar(@RequestBody @Valid ReservaForm form, UriComponentsBuilder uriBuilder, @AuthenticationPrincipal UserDetails userDetails) throws Exception {
+		defineSePodeManipularReserva(form.getTurmaId(), userDetails);
+		
 		Reserva reserva = form.converter(horarioRepositorio, turmaRepositorio);
 		reservaRepositorio.save(reserva);
 		
 		URI uri = uriBuilder.path("/usuarios/{id}").buildAndExpand(reserva.getId()).toUri();
-		return ResponseEntity.created(uri).body(new ReservaDto(reserva));
+		return ResponseEntity.created(uri).body(new ReservaDto(reserva));				
+	}
+
+	private void defineSePodeManipularReserva(Long turmaId, UserDetails userDetails) throws Exception {
+		boolean admin = false;	
+		for (GrantedAuthority x : userDetails.getAuthorities()) {
+			if (x.toString().equals("ROLE_ADMINISTRADOR")) {
+				admin = true;
+			}
+		}
+		
+		if (!admin) {
+			boolean turmaEncontrada = false;
+			Professor professor = professorRepositorio.findByUsuarioUserName(userDetails.getUsername()).get();
+			for (Turma turma : professor.getTurmas()) {
+				if (turma.getId() == turmaId) {
+					turmaEncontrada = true;
+				}
+			}
+			if (!turmaEncontrada) {
+				throw new Exception("Professor não da aula para a turma de id:" + turmaId);
+			}
+		}
 	}
 	
 	@CrossOrigin
@@ -81,8 +113,9 @@ public class ReservaControle {
 	@CrossOrigin
 	@PutMapping("/{id}")
 	@Transactional
-	@PreAuthorize("hasRole('ADMINISTRADOR')")
-	public ResponseEntity<ReservaDto> atualizar(@PathVariable Long id, @RequestBody @Valid AtualizacaoReservaForm form) throws Exception{
+	@PreAuthorize("hasRole('ADMINISTRADOR') or hasRole('PROFESSOR')")
+	public ResponseEntity<ReservaDto> atualizar(@PathVariable Long id, @RequestBody @Valid AtualizacaoReservaForm form, @AuthenticationPrincipal UserDetails userDetails) throws Exception{
+		defineSePodeManipularReserva(form.getTurmaId(), userDetails);
 		Optional<Reserva> opcional = reservaRepositorio.findById(id);
 		if(opcional.isPresent()) {
 			Reserva reserva = form.atualiza(id, horarioRepositorio, turmaRepositorio, reservaRepositorio);
@@ -96,11 +129,12 @@ public class ReservaControle {
 	@CrossOrigin
 	@DeleteMapping("/{id}")
 	@Transactional
-	@PreAuthorize("hasRole('ADMINISTRADOR')")
-	public ResponseEntity<?> remover(@PathVariable Long id){
+	@PreAuthorize("hasRole('ADMINISTRADOR') or hasRole('PROFESSOR')")
+	public ResponseEntity<?> remover(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) throws Exception{
 		Optional<Reserva> reservaOpt = reservaRepositorio.findById(id);
 		if(reservaOpt.isPresent()) {
 			Reserva reserva = reservaOpt.get();
+			defineSePodeManipularReserva(reserva.getTurma().getId(), userDetails);
 			Horario horario = horarioRepositorio.findById(reserva.getHorario().getId()).get();
 			Turma turma = turmaRepositorio.findById(reserva.getHorario().getId()).get();
 			horario.getReservas().remove(reserva);
