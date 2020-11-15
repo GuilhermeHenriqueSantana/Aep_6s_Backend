@@ -26,6 +26,7 @@ import com.aep.s.aep6s.controle.form.AtualizacaoProfessorForm;
 import com.aep.s.aep6s.controle.form.ProfessorForm;
 import com.aep.s.aep6s.modelos.Professor;
 import com.aep.s.aep6s.repositorio.ProfessorRepositorio;
+import com.aep.s.aep6s.repositorio.UsuarioRepositorio;
 
 @RestController
 @RequestMapping("/professores")
@@ -33,6 +34,9 @@ public class ProfessorControle {
 	
 	@Autowired
 	ProfessorRepositorio professorRepositorio;
+	
+	@Autowired
+	UsuarioRepositorio usuarioRepositorio;
 
 	@CrossOrigin
 	@GetMapping
@@ -48,8 +52,8 @@ public class ProfessorControle {
 	@PostMapping
 	@Transactional
 	@PreAuthorize("hasRole('ADMINISTRADOR')")
-	public ResponseEntity<ProfessorDto> cadastrar(@RequestBody @Valid ProfessorForm form, UriComponentsBuilder uriBuilder) {
-		Professor professor = form.converter();
+	public ResponseEntity<ProfessorDto> cadastrar(@RequestBody @Valid ProfessorForm form, UriComponentsBuilder uriBuilder) throws Exception {
+		Professor professor = form.converter(usuarioRepositorio);
 		professorRepositorio.save(professor);
 		
 		URI uri = uriBuilder.path("/professores/{id}").buildAndExpand(professor.getId()).toUri();
