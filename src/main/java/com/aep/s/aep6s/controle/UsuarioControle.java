@@ -11,6 +11,9 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -103,5 +106,32 @@ public class UsuarioControle {
 		}
 		return ResponseEntity.notFound().build();
 	}
+	
+	@CrossOrigin
+	@GetMapping("/tipo")
+	public String get(@AuthenticationPrincipal UserDetails userDetails) {
+			
+		for (GrantedAuthority x : userDetails.getAuthorities()) {
+			if (x.toString().equals("ROLE_ADMINISTRADOR")) {
+				return "ADMIN";
+			}
+		}
+		
+		for (GrantedAuthority x : userDetails.getAuthorities()) {
+			if (x.toString().equals("ROLE_PROFESSOR")){
+				return "PROFESSOR";
+			}
+		}
+		
+		for (GrantedAuthority x : userDetails.getAuthorities()) {
+			if (x.toString().equals("ROLE_USUARIO")){
+				return "ALUNO";
+			}
+		}
+		
+		return "";
+	}
+	
+	
 	
 }
