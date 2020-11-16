@@ -96,4 +96,15 @@ public class ProfessorControle {
 		}
 		return ResponseEntity.notFound().build();
 	}
+	
+	
+	@CrossOrigin
+	@GetMapping("/user/{user}")
+	@PreAuthorize("hasRole('LIVRE') or hasRole('PROFESSOR') or hasRole('ADIMINISTRADOR')")
+	public ProfessorDto get(@PathVariable String user) {
+		
+		Professor professor = professorRepositorio.findByUsuarioUserName(user).get();
+		
+		return new ProfessorDto(professor);
+	}
 }
