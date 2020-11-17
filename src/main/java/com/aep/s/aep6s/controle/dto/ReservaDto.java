@@ -18,6 +18,10 @@ public class ReservaDto {
 	private Long horarioId;
 	
 	private Long turmaId;
+	
+	private HorarioDto horarioDto;
+	
+	private TurmaDto turmaDto;
 
 	public ReservaDto(Reserva reserva) {
 		this.id = reserva.getId();
@@ -25,6 +29,8 @@ public class ReservaDto {
 		this.tipoReserva = reserva.getTipoReserva();
 		this.horarioId = reserva.getHorario().getId();
 		this.turmaId = reserva.getTurma().getId();
+		this.horarioDto = new HorarioDto(reserva.getHorario());
+		this.turmaDto = new TurmaDto(reserva.getTurma());
 	}
 
 	public Long getId() {
@@ -45,6 +51,14 @@ public class ReservaDto {
 
 	public Long getTurmaId() {
 		return turmaId;
+	}
+	
+	public HorarioDto getHorarioDto() {
+		return horarioDto;
+	}
+	
+	public TurmaDto getTurmaDto() {
+		return turmaDto;
 	}
 	
 	public static List<ReservaDto> converter(List<Reserva> reservas) {

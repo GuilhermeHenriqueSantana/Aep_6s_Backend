@@ -18,6 +18,8 @@ public class HorarioDto {
 	private Long laboratorioId;
 	
 	private List<Long> reservasIds;
+	
+	private LaboratorioDto laboratorioDto;
 
 	public HorarioDto(Horario horario) {
 		this.id = horario.getId();
@@ -28,6 +30,8 @@ public class HorarioDto {
 		horario.getReservas().forEach(x -> {
 			this.reservasIds.add(x.getId());
 		});
+		
+		this.laboratorioDto = new LaboratorioDto(horario.getLaboratorio());
 		
 		Date date = horario.getData().getTime();
 		this.dataTimestamp = new Long(date.getTime()).toString();
@@ -51,6 +55,10 @@ public class HorarioDto {
 
 	public List<Long> getReservasIds() {
 		return reservasIds;
+	}
+	
+	public LaboratorioDto getLaboratorioDto() {
+		return laboratorioDto;
 	}
 	
 	public static List<HorarioDto> converter(List<Horario> horarios) {
