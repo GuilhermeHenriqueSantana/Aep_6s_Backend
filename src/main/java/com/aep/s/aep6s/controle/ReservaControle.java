@@ -136,7 +136,7 @@ public class ReservaControle {
 			Reserva reserva = reservaOpt.get();
 			defineSePodeManipularReserva(reserva.getTurma().getId(), userDetails);
 			Horario horario = horarioRepositorio.findById(reserva.getHorario().getId()).get();
-			Turma turma = turmaRepositorio.findById(reserva.getHorario().getId()).get();
+			Turma turma = turmaRepositorio.findById(reserva.getTurma().getId()).get();
 			horario.getReservas().remove(reserva);
 			turma.getReservas().remove(reserva);
 			reservaRepositorio.deleteById(id);	
