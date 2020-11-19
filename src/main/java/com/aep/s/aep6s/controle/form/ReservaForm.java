@@ -6,10 +6,12 @@ import javax.validation.constraints.NotNull;
 
 import com.aep.s.aep6s.modelos.Horario;
 import com.aep.s.aep6s.modelos.HorarioReserva;
+import com.aep.s.aep6s.modelos.Professor;
 import com.aep.s.aep6s.modelos.Reserva;
 import com.aep.s.aep6s.modelos.TipoReserva;
 import com.aep.s.aep6s.modelos.Turma;
 import com.aep.s.aep6s.repositorio.HorarioRepositorio;
+import com.aep.s.aep6s.repositorio.ProfessorRepositorio;
 import com.aep.s.aep6s.repositorio.TurmaRepositorio;
 
 public class ReservaForm {
@@ -25,6 +27,9 @@ public class ReservaForm {
 	
 	@NotNull
 	private Long turmaId;
+	
+	@NotNull
+	private Long professorId;
 
 	public HorarioReserva getHorarioReserva() {
 		return horarioReserva;
@@ -58,7 +63,17 @@ public class ReservaForm {
 		this.turmaId = turmaId;
 	}
 	
-	public Reserva converter(HorarioRepositorio horarioRepositorio, TurmaRepositorio turmaRepositorio) throws Exception {
+	public Long getProfessorId() {
+		return professorId;
+	}
+	
+	public void setProfessorId(Long professorId) {
+		this.professorId = professorId;
+	}
+	
+	public Reserva converter(HorarioRepositorio horarioRepositorio, TurmaRepositorio turmaRepositorio, ProfessorRepositorio professorRepositorio) throws Exception {
+		
+		Optional<Professor> professorOpt = professorRepositorio.findById(professorId);
 		
 		Optional<Horario> horarioOpt = horarioRepositorio.findById(horarioId);
 		
@@ -72,10 +87,15 @@ public class ReservaForm {
 			throw new Exception("Turma com id:" + turmaId + " não foi encontrado");
 		}
 		
+		if (!professorOpt.isPresent()) {
+			throw new Exception("Professor com id:" + professorId + " não foi encontrado");
+		}
+		
 		Horario horario = horarioOpt.get();
 		Turma turma = turmaOpt.get();
+		Professor professor = professorOpt.get();
 		
-		Reserva reserva = new Reserva(horarioReserva, tipoReserva, horario, turma);
+		Reserva reserva = new Reserva(horarioReserva, tipoReserva, horario, turma, professor);
 		
 		horario.getReservas().add(reserva);
 		turma.getReservas().add(reserva);

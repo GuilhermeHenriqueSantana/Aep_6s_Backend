@@ -69,7 +69,7 @@ public class ReservaControle {
 	public ResponseEntity<ReservaDto> cadastrar(@RequestBody @Valid ReservaForm form, UriComponentsBuilder uriBuilder, @AuthenticationPrincipal UserDetails userDetails) throws Exception {
 		defineSePodeManipularReserva(form.getTurmaId(), userDetails);
 		
-		Reserva reserva = form.converter(horarioRepositorio, turmaRepositorio);
+		Reserva reserva = form.converter(horarioRepositorio, turmaRepositorio, professorRepositorio);
 		reservaRepositorio.save(reserva);
 		
 		URI uri = uriBuilder.path("/usuarios/{id}").buildAndExpand(reserva.getId()).toUri();

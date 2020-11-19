@@ -7,6 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 @Entity
 public class Reserva {
@@ -27,15 +28,19 @@ public class Reserva {
 	@ManyToOne
 	private Turma turma;
 	
+	@ManyToOne
+	private Professor professor;
+	
 	public Reserva() {
 
 	}
 
-	public Reserva(HorarioReserva horarioReserva, TipoReserva tipoReserva, Horario horario, Turma turma) {
+	public Reserva(HorarioReserva horarioReserva, TipoReserva tipoReserva, Horario horario, Turma turma, Professor professor) {
 		this.horarioReserva = horarioReserva;
 		this.tipoReserva = tipoReserva;
 		this.horario = horario;
 		this.turma = turma;
+		this.professor = professor;
 	}
 
 	@Override
@@ -101,5 +106,13 @@ public class Reserva {
 	
 	public void setHorario(Horario horario) {
 		this.horario = horario;
+	}
+	
+	public Professor getProfessor() {
+		return professor;
+	}
+	
+	public void setProfessor(Professor professor) {
+		this.professor = professor;
 	}
 }

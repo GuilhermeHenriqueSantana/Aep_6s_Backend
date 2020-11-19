@@ -22,6 +22,8 @@ public class ReservaDto {
 	private HorarioDto horarioDto;
 	
 	private TurmaDto turmaDto;
+	
+	private ProfessorDto professorDto;
 
 	public ReservaDto(Reserva reserva) {
 		this.id = reserva.getId();
@@ -31,6 +33,7 @@ public class ReservaDto {
 		this.turmaId = reserva.getTurma().getId();
 		this.horarioDto = new HorarioDto(reserva.getHorario());
 		this.turmaDto = new TurmaDto(reserva.getTurma());
+		this.professorDto = new ProfessorDto(reserva.getProfessor());
 	}
 
 	public Long getId() {
@@ -59,6 +62,10 @@ public class ReservaDto {
 	
 	public TurmaDto getTurmaDto() {
 		return turmaDto;
+	}
+	
+	public ProfessorDto getProfessorDto() {
+		return professorDto;
 	}
 	
 	public static List<ReservaDto> converter(List<Reserva> reservas) {
